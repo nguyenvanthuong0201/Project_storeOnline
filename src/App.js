@@ -4,7 +4,6 @@ import React, { Fragment, useState } from "react";
 import "./App.css";
 import { BrowserRouter as Router, Switch, Route } from "react-router-dom";
 import CptFooter from "./Components/Footer/index";
-import CptHeader from "./Components/Header";
 import CptSiderbar from "./Components/Sidebar";
 import routes from "./routers/index";
 import ConHeader from "./Containers/ConHeader";
@@ -30,23 +29,7 @@ function App() {
   const handleOnFinishFailed = () => {
     setErrorInfo(errorInfo);
   };
-  const columns = [
-    {
-      title: "First Name",
-      dataIndex: "firstName",
-      key: "firstName",
-    },
-    {
-      title: "Last Name",
-      dataIndex: "lastName",
-      key: "lastName",
-    },
-    {
-      title: "Phone Number",
-      dataIndex: "phoneNumber",
-      key: "phoneNumber",
-    },
-  ];
+
   const onCollapse = () => {
     setCollapsed(!collapsed);
   };

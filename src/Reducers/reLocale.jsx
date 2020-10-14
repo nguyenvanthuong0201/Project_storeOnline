@@ -1,5 +1,4 @@
 import locale from "antd/lib/date-picker/locale/en_US";
-
 let initialState = { locale };
 let reLocale = (state = initialState, action) => {
   switch (action.type) {

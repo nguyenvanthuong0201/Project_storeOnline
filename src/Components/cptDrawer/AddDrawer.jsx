@@ -22,7 +22,12 @@ function AddDrawer({ show, handleOnClose, onFinish, onFinishFailed }) {
     /// Form Dùng effect để gài bẫy
     setState({});
   }, []);
-
+  const onFinish = (value) => {
+    console.log("value", value);
+  };
+  const onFinish = (onFinishFailed) => {
+    console.log("onFinishFailed", onFinishFailed);
+  };
   return (
     <Drawer
       width={512}

@@ -4,9 +4,15 @@ import PropTypes from "prop-types";
 ConProfile.propTypes = {};
 
 function ConProfile(props) {
+  const array = [
+    { title: "Thương", data: "firebase" },
+    { title: "Hoàng", data: "MongoDB" },
+  ];
   return (
     <div>
-      <h2>đây là trang thông tin cá nhân</h2>
+      {array.map((ar, index) => {
+        return <li key={index}>{ar.title}</li>;
+      })}
     </div>
   );
 }

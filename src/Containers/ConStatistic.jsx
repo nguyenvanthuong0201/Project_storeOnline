@@ -1,14 +1,20 @@
-import React from "react";
-import PropTypes from "prop-types";
+import React, { useState, useEffect } from "react";
+import { Column } from "@ant-design/charts";
+import { Col, Row } from "antd";
+import CptStatisticCard from "../Components/cptStatistic/CptStatisticCard";
+import CptStatisticCharts from "../Components/cptStatistic/CptStatisticCharts";
 
-ConStatistic.propTypes = {};
-
-function ConStatistic(props) {
+const ConStatistic = () => {
   return (
-    <div>
-      <h1>đây là thống kế</h1>
-    </div>
+    <>
+      <Row>
+        <CptStatisticCard />
+      </Row>
+      <Row>
+        <CptStatisticCharts />
+      </Row>
+    </>
   );
-}
+};
 
 export default ConStatistic;

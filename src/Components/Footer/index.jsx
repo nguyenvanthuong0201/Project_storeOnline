@@ -5,7 +5,7 @@ const { Footer } = Layout;
 function CptFooter() {
   return (
     <Footer style={{ textAlign: "center" }}>
-      Ant Design ©2018 Created by Ant UED
+      Cố lên người anh em !!! ba cái đồ án thôi mà =.="
     </Footer>
   );
 }

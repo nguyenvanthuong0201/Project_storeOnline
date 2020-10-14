@@ -55,25 +55,11 @@ function CptHeader(props) {
   //   }
   // };
   const changeLocale = (language) => {
-    // switch (language) {
-    //   case "en":
-    //     moment.locale("en");
-    //     onChangeLocale(enUS);
-    //     break;
-
-    //   case "vi":
-    //     moment.locale("vi");
-    //     onChangeLocale(viVN);
-    //     break;
-
-    //   default:
-    //     break;
-    // }
     if (language === "en") {
       onChangeLocale(enUS);
       moment.locale("en");
-    }
-    if (language === "vi") {
+    } else {
+      onChangeLocale(viVN);
       moment.locale("vi");
     }
   };
@@ -114,6 +100,7 @@ function CptHeader(props) {
             </Radio.Button>
           </Radio.Group>
         </div> */}
+
         <div>
           <Switch
             checked={theme.theme === "dark"}
@@ -124,7 +111,6 @@ function CptHeader(props) {
         </div>
         <div className="Header__account">
           <h1>Hello I m gì đó</h1>
-          <DatePicker />
         </div>
       </div>
     </Header>

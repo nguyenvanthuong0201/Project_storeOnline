@@ -36,25 +36,24 @@ function CptSiderbar(props) {
             {collapsed ? "" : "ChinChan"}
           </div>
         </div>
-        <Menu.Item key="2" icon={<TeamOutlined />}>
+        <Menu.Item key="2" icon={<LineChartOutlined />}>
           <Link to="/">
-            {locale.locale === "vi" ? "Ds khách hàng" : "Customer list"}
+            {locale.locale === "vi" ? "Thống kê" : "Statistic"}
           </Link>
         </Menu.Item>
-        <Menu.Item key="3" icon={<SkinOutlined />}>
+        <Menu.Item key="3" icon={<TeamOutlined />}>
+          <Link to="/customer">
+            {locale.locale === "vi" ? "Khách hàng" : "Customer"}
+          </Link>
+        </Menu.Item>
+        <Menu.Item key="4" icon={<SkinOutlined />}>
           <Link to="/product">
             {locale.locale === "vi" ? "Sản phẩm" : "Product"}
           </Link>
         </Menu.Item>
-        <Menu.Item key="4" icon={<LineChartOutlined />}>
-          <Link to="/statistic">
-            {locale.locale === "vi" ? "Thống kê" : "Statistic"}
-          </Link>
-        </Menu.Item>
+
         <Menu.Item key="5" icon={<InboxOutlined />}>
-          <Link to="/warehouse">
-            {locale.locale === "vi" ? "Kho hàng" : "Warehouse"}
-          </Link>
+          <Link to="/cart">{locale.locale === "vi" ? "Hóa đơn" : "Bill"}</Link>
         </Menu.Item>
         <SubMenu
           key="sub6"
@@ -63,7 +62,7 @@ function CptSiderbar(props) {
         >
           <Menu.Item key="7">
             <Link to="/profile">
-              {locale.locale === "vi" ? "Hồ sơ " : "Profile"}Hồ sơ
+              {locale.locale === "vi" ? "Hồ sơ " : "Profile"}
             </Link>
           </Menu.Item>
           <Menu.Item key="8">Logout</Menu.Item>
