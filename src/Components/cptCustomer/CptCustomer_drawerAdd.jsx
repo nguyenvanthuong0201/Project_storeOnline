@@ -1,6 +1,8 @@
 import React, { Fragment } from "react";
 import PropTypes from "prop-types";
-import { Form, Button, Checkbox, Drawer, Input } from "antd";
+import { Form, Button, Checkbox, Drawer, Input, Select, Upload } from "antd";
+import AvatarAdd from "./compoment/AvatarAdd";
+import { UploadOutlined } from "@ant-design/icons";
 
 function CptCustomer_drawerAdd(props) {
   const initialValues = { firstName: "", lastName: "", phoneNumber: null };
@@ -10,24 +12,47 @@ function CptCustomer_drawerAdd(props) {
     setDrawer(false);
   };
 
-  const onFinish = (value) => {
-    console.log("value", value);
-    setDrawer(false);
+  const onFinish = async (value) => {
+    // console.log("value", value);
+    // setDrawer(false);
+    // const storageRef = firebase.storage().ref("images").child(id);
+    // await storageRef.put(value.upload[0].originFileObj);
+    // storageRef.getDownloadURL().then((url) => {
+    //   //   imageRef.set({ image: url, title: "Hoang" });
+    //   console.log(url);
+    // });
+    // console.log("value.upload", value.upload[0].originFileObj);
   };
+
   const onFinishFailed = (onFinishFailed) => {
     console.log("onFinishFailed", onFinishFailed);
   };
+
+  const layout = {
+    labelCol: { span: 6 },
+    wrapperCol: { span: 16 },
+  };
+
+  const normFile = (e) => {
+    console.log("Upload event:", e);
+    if (Array.isArray(e)) {
+      return e;
+    }
+    return e && e.fileList;
+  };
+
   return (
     <div>
       <Drawer
         width={512}
-        title="Add Customer"
-        visible={true}
+        title="Registration employee"
+        visible={drawer}
         onClose={handleOnCloseDrawer}
         placement="right"
         maskClosable={true} /// Form nhấn bên ngoài để đóng ngăn
       >
         <Form
+          {...layout}
           form={form}
           name="basic"
           initialValues={initialValues}
@@ -36,49 +61,64 @@ function CptCustomer_drawerAdd(props) {
           layout="horizontal" // Form chỉnh các lable va input
         >
           <Form.Item
-            style={{ width: "200px" }}
-            label="First Name"
-            name="firstName"
+            name="upload"
+            label="Upload"
+            valuePropName="fileList"
+            getValueFromEvent={normFile}
+          >
+            <Upload name="logo" action="/upload.do" listType="picture">
+              <Button icon={<UploadOutlined />}>Click to upload</Button>
+            </Upload>
+          </Form.Item>
+          <Form.Item
+            label="Full Name"
+            name="fullName"
             rules={[
-              { required: true, message: "Please input your first name!" },
+              { required: true, message: "Please input your full name!" },
             ]}
           >
-            <Input className="AddCustomer " />
+            <Input />
           </Form.Item>
-
           <Form.Item
-            style={{ width: "200px" }}
-            label="Last Name"
-            name="lastName"
-            rules={[
-              { required: true, message: "Please input your last name!" },
-            ]}
+            label="Password"
+            name="password"
+            rules={[{ required: true, message: "Please input your password!" }]}
           >
-            <Input className="AddCustomer" />
+            <Input.Password />
           </Form.Item>
-
           <Form.Item
-            label="Phone number"
-            name="phoneNumber"
-            rules={[
-              { required: true, message: "Please input your Phone number!" },
-            ]}
+            label="Phone "
+            name="phone"
+            rules={[{ required: true, message: "Please input your Phone !" }]}
           >
             <Input type="tel" />
           </Form.Item>
-          {/* 
-        <Form.Item
-          label="Password"
-          name="password"
-          rules={[{ required: true, message: "Please input your password!" }]}
-        >
-          <Input.Password />   
-        </Form.Item> */}
-
-          <Form.Item name="remember" valuePropName="checked">
-            <Checkbox>Remember me</Checkbox>
+          <Form.Item
+            label="Email"
+            name="email"
+            rules={[{ required: true, message: "Please input your Email!" }]}
+          >
+            <Input type="email" />
           </Form.Item>
-
+          <Form.Item
+            label="Address"
+            name="address"
+            rules={[{ required: true, message: "Please input your address!" }]}
+          >
+            <Input />
+          </Form.Item>
+          <Form.Item
+            label="Position"
+            name="position"
+            rules={[
+              { required: true, message: "Please input your first position!" },
+            ]}
+          >
+            <Select>
+              <Select.Option value="employee">Employee</Select.Option>
+              <Select.Option value="admin">Admin</Select.Option>
+            </Select>
+          </Form.Item>
           <Form.Item shouldUpdate={true}>
             {() => (
               <Fragment>

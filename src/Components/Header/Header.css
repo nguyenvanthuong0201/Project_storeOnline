@@ -11,6 +11,7 @@ span.anticon.anticon-menu-unfold.trigger {
 header.ant-layout-header.site-layout-background.Header {
   display: flex;
   justify-content: space-between;
+  color: aliceblue;
 }
 .Header_controller {
   display: flex;

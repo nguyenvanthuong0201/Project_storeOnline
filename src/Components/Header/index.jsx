@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { ConfigProvider, DatePicker, Radio, Switch } from "antd";
+import { ConfigProvider, DatePicker, Dropdown, Radio, Switch } from "antd";
 import {
   MenuUnfoldOutlined,
   MenuFoldOutlined,
@@ -17,51 +17,32 @@ import viVN from "antd/es/locale/vi_VN";
 import moment from "moment";
 import "moment/locale/zh-cn";
 import App from "../../App";
+import Avatar from "antd/lib/avatar/avatar";
 moment.locale("en");
 
 const { Option } = Select;
 
-const { SubMenu } = Menu;
+const { Header } = Layout;
 
-const { Header, Content, Sider } = Layout;
+const menu = (
+  <Menu>
+    <Menu.Item>
+      <a target="_blank">Nguyễn Văn Thương</a>
+    </Menu.Item>
+    <Menu.Item>
+      <a target="_blank">Giỏ hàng</a>
+    </Menu.Item>
+    <Menu.Item>
+      <a target="_blank">Logout</a>
+    </Menu.Item>
+  </Menu>
+);
 
 function CptHeader(props) {
-  const {
-    collapsed,
-    onCollapse,
-    theme,
-    locale,
-    onChangeLocale,
-    onChangeDarkMode,
-  } = props;
+  const { collapsed, onCollapse } = props;
 
   const HandleClickCollapsed = () => {
     onCollapse(!collapsed);
-  };
-  const changeTheme = (value) => {
-    onChangeDarkMode({
-      ...theme,
-      theme: value ? "dark" : "light",
-    });
-  };
-  // Dùng cho radio button để chọn ngôn ngữ
-  // const changeLocale = (e) => {
-  //   onChangeLocale(e.target.value);
-  //   console.log(e.target.value);
-  //   if (!e.target.value) {
-  //     moment.locale("en");
-  //   } else {
-  //     moment.locale("vi");
-  //   }
-  // };
-  const changeLocale = (language) => {
-    if (language === "en") {
-      onChangeLocale(enUS);
-      moment.locale("en");
-    } else {
-      onChangeLocale(viVN);
-      moment.locale("vi");
-    }
   };
 
   return (
@@ -76,41 +57,10 @@ function CptHeader(props) {
         )}
       </div>
       <div className="Header_controller">
-        <div className="Header_langue">
-          <Select
-            defaultValue="Vietnamese"
-            defaultValue="English"
-            style={{ width: 200 }}
-            onChange={changeLocale}
-          >
-            <Option value="en">English</Option>
-            <Option value="vi">Vietnamese</Option>
-          </Select>
-        </div>
-
-        {/* /// Xử dụng Radio>button để chọn ngôn ngữ */}
-        {/* <div className="Header_langue">
-          <span style={{ marginRight: 6 }}> locale: </span>
-          <Radio.Group value={locale} oCnhange={changeLocale}>
-            <Radio.Button key="en" value={enUS}>
-              English
-            </Radio.Button>
-            <Radio.Button key="vi" value={viVN}>
-              Việt Nam
-            </Radio.Button>
-          </Radio.Group>
-        </div> */}
-
-        <div>
-          <Switch
-            checked={theme.theme === "dark"}
-            onChange={changeTheme}
-            checkedChildren="Dark"
-            unCheckedChildren="Light"
-          />
-        </div>
         <div className="Header__account">
-          <h1>Hello I m gì đó</h1>
+          <Dropdown overlay={menu} placement="bottomLeft">
+            <Avatar size="large" icon={<UserOutlined />} />
+          </Dropdown>
         </div>
       </div>
     </Header>

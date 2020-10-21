@@ -1,12 +1,13 @@
 import React from "react";
 import PropTypes from "prop-types";
+import CptBill from "../Components/cptBill/CptBill";
 
 ConCart.propTypes = {};
 
 function ConCart(props) {
   return (
     <div>
-      <h1>Đây là giỏ hàng</h1>
+      <CptBill />
     </div>
   );
 }

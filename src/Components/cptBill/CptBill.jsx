@@ -3,103 +3,62 @@ import { Button, Col, Input, Row } from "antd";
 import { Table } from "antd";
 import { PlusSquareOutlined } from "@ant-design/icons";
 
-function CptProduct(props) {
+function CptBill(props) {
   const [filterTable, setFilterTable] = useState(null);
   const columns = [
     {
-      title: "ID",
-      dataIndex: "id",
-      width: "5%",
+      title: "PaymentId",
+      dataIndex: "paymentId",
+      width: "10%",
+      fixed: "left",
     },
     {
-      title: "Title",
-      dataIndex: "title",
+      title: "CustomerId",
+      dataIndex: "customerId",
+      width: "10%",
+      fixed: "left",
+    },
+    {
+      title: "First Name",
+      dataIndex: "firstName",
+      width: "10%",
+      defaultSortOrder: "descend",
+    },
+    {
+      title: "Last Name",
+      dataIndex: "lastName",
+      width: "10%",
+    },
+    {
+      title: "Phone",
+      dataIndex: "phone",
+      width: "10%",
+    },
+    {
+      title: "Email",
+      dataIndex: "email",
       width: "20%",
     },
     {
-      title: "Picture",
-      dataIndex: "picture",
-      width: "10%",
-    },
-    {
-      title: "Amount",
-      dataIndex: "amount",
-      width: "10%",
-      defaultSortOrder: "descend",
-      sorter: (a, b) => a.amount - b.amount,
-    },
-    {
-      title: "Product Type",
-      dataIndex: "productType",
-      width: "10%",
-      filters: [
-        {
-          text: "Quần",
-          value: "Quần",
-        },
-        {
-          text: "Áo",
-          value: "Áo",
-        },
-      ],
-      filterMultiple: false,
-      onFilter: (value, record) => record.productType.indexOf(value) === 0,
-    },
-    {
-      title: "Size",
-      dataIndex: "size",
-      width: "10%",
-      filters: [
-        {
-          text: "S",
-          value: "S",
-        },
-        {
-          text: "M",
-          value: "M",
-        },
-        {
-          text: "L",
-          value: "L",
-        },
-        {
-          text: "XL",
-          value: "XL",
-        },
-        {
-          text: "XXL",
-          value: "XXL",
-        },
-      ],
-      filterMultiple: false,
-      onFilter: (value, record) => record.size.indexOf(value) === 0,
-      sorter: (a, b) => a.size.length - b.size.length,
-      sortDirections: ["descend", "ascend"],
+      title: "Cart",
+      dataIndex: "cart",
+      width: "20%",
     },
     {
       title: "Price",
       dataIndex: "price",
       width: "10%",
-      defaultSortOrder: "descend",
-      sorter: (a, b) => a.price - b.price,
     },
-    {
-      title: "Sale Price",
-      width: "10%",
-      dataIndex: "salePrice",
-      defaultSortOrder: "descend",
-      sorter: (a, b) => a.salePrice - b.salePrice,
-    },
+
     {
       title: "Action",
       dataIndex: "action",
       width: "15%",
+      fixed: "right",
+
       render: (text, record) => (
         <>
-          <Button type="primary" onClick={() => handleEdit(record)}>
-            Edit
-          </Button>
-          <Button type="dashed" onClick={() => handleDelete(record.id)}>
+          <Button type="primary" onClick={() => handleDelete(record.id)}>
             Delete
           </Button>
         </>
@@ -268,7 +227,7 @@ function CptProduct(props) {
 
   return (
     <div>
-      <Row> 
+      <Row>
         <Col xs={24} md={24} lg={10}>
           <Input.Search
             placeholder="Search by..."
@@ -277,11 +236,6 @@ function CptProduct(props) {
             allowClear={true}
           />
         </Col>
-        <Col xs={24} md={24} lg={3} offset={11}>
-          <Button type="primary" block icon={<PlusSquareOutlined />}>
-            Add product
-          </Button>
-        </Col>
       </Row>
 
       <Row>
@@ -289,10 +243,10 @@ function CptProduct(props) {
           <Table
             columns={columns}
             dataSource={filterTable == null ? data : filterTable}
-            pagination={{ pageSize: 10 }}
+            pagination={{ pageSize: 6 }}
             size="small"
-            scroll={{ y: 300 }}
             rowKey="id"
+            scroll={{ x: 1500, y: 300 }}
           />
         </Col>
       </Row>
@@ -300,4 +254,4 @@ function CptProduct(props) {
   );
 }
 
-export default CptProduct;
+export default CptBill;

@@ -7,13 +7,6 @@ import CptProduct from "../Components/Products/CptProduct";
 ConProduct.propTypes = {};
 
 function ConProduct(props) {
-  const locale = useSelector((state) => state.reLocale);
-
-  return (
-    <ConfigProvider locale={locale}>
-      <CptProduct key={locale ? locale.locale : "en"} />
-    </ConfigProvider>
-  );
+  return <CptProduct />;
 }
-
 export default ConProduct;

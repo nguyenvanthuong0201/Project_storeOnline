@@ -47,28 +47,7 @@ function CptCustomer(props) {
       title: "City",
       dataIndex: "city",
       width: "10%",
-      filters: [
-        {
-          text: "Hà Nội",
-          value: "Hà Nội",
-        },
-        {
-          text: "Hồ Chí Minh",
-          value: "Hồ Chí Minh",
-        },
-        {
-          text: "Đà Nẵng",
-          value: "Đà Nẵng",
-        },
-        {
-          text: "Huế",
-          value: "Huế",
-        },
-        {
-          text: "Khánh Hòa",
-          value: "Khánh Hòa",
-        },
-      ],
+      
       filterMultiple: false,
       onFilter: (value, record) => record.city.indexOf(value) === 0,
       sorter: (a, b) => a.city.length - b.city.length,
