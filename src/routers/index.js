@@ -1,43 +1,55 @@
 import React from "react";
-import ConCustomerList from "../Containers/ConCustomerList";
-import ConNotFound from "../Containers/ConNotFound";
-import ConProduct from "../Containers/ConProduct";
-import ConProfile from "../Containers/ConProfile";
-import ConCart from "../Containers/ConCart";
-import ConStatistic from "../Containers/ConStatistic";
+import AdminCustomer from "../Components/Page/admin/adminCustomer/AdminCustomer";
+import AdminEmployee from "../Components/Page/admin/adminEmployee/AdminEmployee";
+import AdminPayment from "../Components/Page/admin/adminPayment/AdminPayment";
+import AdminProduct from "../Components/Page/admin/adminProducts/AdminProduct";
+import AdminProfile from "../Components/Page/admin/adminProfile/AdminProfile";
+import AdminStatistic from "../Components/Page/admin/adminStatistic/AdminStatistic";
+import NotFound from "../Components/Page/NotFound";
 
-const routes = [
+export const routes = [
   {
+    /// điều chỉnh
     path: "/",
     exact: true,
-    main: () => <ConStatistic />,
+    main: () => <AdminStatistic />,
   },
   {
-    path: "/customer",
-    exact: false,
-    main: () => <ConCustomerList />,
+    /// điều chỉnh
+    path: "/admin",
+    exact: true,
+    main: () => <AdminStatistic />,
   },
   {
-    path: "/product",
+    path: "/admin/customer",
     exact: false,
-    main: () => <ConProduct />,
+    main: () => <AdminCustomer />,
+  },
+  {
+    path: "/admin/product",
+    exact: false,
+    main: () => <AdminProduct />,
   },
 
   {
-    path: "/profile",
+    path: "/admin/profile",
     exact: false,
-    main: () => <ConProfile />,
+    main: () => <AdminProfile />,
   },
   {
-    path: "/cart",
+    path: "/admin/payment",
     exact: false,
-    main: () => <ConCart />,
+    main: () => <AdminPayment />,
+  },
+  {
+    path: "/admin/employee",
+    exact: false,
+    main: () => <AdminEmployee />,
   },
   {
     // 404 phải  đặt dưới cùng
     path: "",
     exact: false,
-    main: () => <ConNotFound />,
+    main: () => <NotFound />,
   },
 ];
-export default routes;

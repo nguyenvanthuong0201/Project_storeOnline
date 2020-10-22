@@ -1,0 +1,17 @@
+.Information__input{
+    float: right;
+    width: 90%;
+}
+.Information__img img.ant-image-img{
+    border-radius: 50%;
+    width: 100px;
+}
+.Information__img img.ant-image-img:hover{
+    cursor: pointer;
+}  
+.Information__img{
+    width: 100%;    
+    text-align: center;
+    margin-bottom: 10px;
+    background-color: #00C2CB;
+}
