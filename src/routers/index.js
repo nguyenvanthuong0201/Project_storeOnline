@@ -5,15 +5,13 @@ import AdminPayment from "../Components/Page/admin/adminPayment/AdminPayment";
 import AdminProduct from "../Components/Page/admin/adminProducts/AdminProduct";
 import AdminProfile from "../Components/Page/admin/adminProfile/AdminProfile";
 import AdminStatistic from "../Components/Page/admin/adminStatistic/AdminStatistic";
+import HomeContact from "../Components/Page/home/homeContact/HomeContact";
+import HomeIntroduce from "../Components/Page/home/homeIntroduce/HomeIntroduce";
+import HomeMater from "../Components/Page/home/homeMaster/HomeMater";
+import HomeProduct from "../Components/Page/home/homeProduct/HomeProduct";
 import NotFound from "../Components/Page/NotFound";
 
 export const routes = [
-  {
-    /// điều chỉnh
-    path: "/",
-    exact: true,
-    main: () => <AdminStatistic />,
-  },
   {
     /// điều chỉnh
     path: "/admin",
@@ -51,5 +49,27 @@ export const routes = [
     path: "",
     exact: false,
     main: () => <NotFound />,
+  },
+];
+export const routerHome = [
+  {
+    path: "/",
+    exact: true,
+    main: () => <HomeMater />,
+  },
+  {
+    path: "/product",
+    exact: true,
+    main: () => <HomeProduct />,
+  },
+  {
+    path: "/introduce",
+    exact: true,
+    main: () => <HomeIntroduce />,
+  },
+  {
+    path: "/contact",
+    exact: true,
+    main: () => <HomeContact />,
   },
 ];
