@@ -1,16 +1,56 @@
-import React, { useState } from "react";
-import { Button, Card, Col, Image, Input, Row } from "antd";
+import React, { useEffect, useState } from "react";
+import { Button, Card, Col, Image, Input, Row, Tag } from "antd";
 import { Table } from "antd";
-import { PlusSquareOutlined } from "@ant-design/icons";
-import Meta from "antd/lib/card/Meta";
+import {
+  PlusSquareOutlined,
+  EyeOutlined,
+  EditOutlined,
+  DeleteOutlined,
+} from "@ant-design/icons";
+import AddProduct from "./components/AdminProduct_addProduct";
+import firebase from "../../../../utils/firebase";
+import AdminProduct_ViewModal from "./components/AdminProduct_ViewModal";
 
 function AdminProduct(props) {
   const [filterTable, setFilterTable] = useState(null);
+  const [drawer, setDrawer] = useState(false);
+  const [dataFireBase, setDataFireBase] = useState([]);
+  const [bodyEdit, setBodyEdit] = useState("");
+  const [openModal, setOpenModal] = useState(false);
+  const [dataView, setDataView] = useState("");
+
+  useEffect(() => {
+    handleClickGetAll();
+  }, []);
+  const handleView = (record) => {
+    setOpenModal(true);
+    handleView(record);
+  };
   const columns = [
     {
-      title: "ID",
-      dataIndex: "id",
-      width: "5%",
+      title: "Action",
+      dataIndex: "action",
+      width: "10%",
+      render: (text, record) => (
+        <>
+          <Button
+            type="primary"
+            icon={<EyeOutlined />}
+            onClick={() => handleView(record)}
+          />
+          <Button
+            type="ghost"
+            icon={<EditOutlined />}
+            style={{ backgroundColor: "yellow" }}
+            onClick={() => handleEdit(record)}
+          />
+          <Button
+            type="danger"
+            icon={<DeleteOutlined />}
+            onClick={() => handleDelete(record.key)}
+          />
+        </>
+      ),
     },
     {
       title: "Title",
@@ -26,20 +66,25 @@ function AdminProduct(props) {
     },
     {
       title: "Type",
-      dataIndex: "productType",
+      dataIndex: "type",
       width: "10%",
       filters: [
         {
-          text: "Quần",
-          value: "Quần",
+          text: "Shirt",
+          value: "Shirt",
         },
         {
-          text: "Áo",
-          value: "Áo",
+          text: "Pant",
+          value: "Pant",
         },
       ],
       filterMultiple: false,
-      onFilter: (value, record) => record.productType.indexOf(value) === 0,
+      onFilter: (value, record) => record.type.indexOf(value) === 0,
+      render: (type) => (
+        <>
+          <Tag color={type === "Shirt" ? "geekblue" : "green"}>{type}</Tag>
+        </>
+      ),
     },
     {
       title: "Size",
@@ -71,190 +116,89 @@ function AdminProduct(props) {
       onFilter: (value, record) => record.size.indexOf(value) === 0,
       sorter: (a, b) => a.size.length - b.size.length,
       sortDirections: ["descend", "ascend"],
+      render: (size) => (
+        <>
+          {size.map((si, i) => {
+            return <span key={i}>{si}|</span>;
+          })}
+        </>
+      ),
     },
     {
       title: "Price",
-      dataIndex: "price",
+      dataIndex: "cost",
       width: "10%",
       defaultSortOrder: "descend",
-      sorter: (a, b) => a.price - b.price,
+      sorter: (a, b) => a.cost - b.cost,
+      render: (cost) => (
+        <>
+          <b style={{ color: "red" }}>{parseInt(cost).toLocaleString()} ₫</b>
+        </>
+      ),
     },
     {
       title: "Sale",
       width: "10%",
-      dataIndex: "salePrice",
+      dataIndex: "sale",
       defaultSortOrder: "descend",
-      sorter: (a, b) => a.salePrice - b.salePrice,
-    },
-    {
-      title: "Action",
-      dataIndex: "action",
-      width: "20%",
-      render: (text, record) => (
+      sorter: (a, b) => a.sale - b.sale,
+      render: (sale) => (
         <>
-          <Button type="primary" onClick={() => handleEdit(record)}>
-            Edit
-          </Button>
-          <Button type="dashed" onClick={() => handleDelete(record.id)}>
-            Delete
-          </Button>
+          <b style={{ color: "red" }}>{parseInt(sale).toLocaleString()} ₫ </b>
         </>
       ),
     },
   ];
-  const handleEdit = (record) => {
-    console.log(record);
+  const handleEdit = (body) => {
+    setBodyEdit(body);
+    setDrawer(true);
   };
   const handleDelete = (id) => {
-    console.log(id);
+    firebase
+      .firestore()
+      .collection("/product")
+      .doc(id)
+      .delete()
+      .then(() => {
+        console.log("Document successfully deleted!");
+        // setdataInput({ title: "", description: "", image: "", key: "" });
+
+        // this.props.history.push("/");
+      })
+      .catch((error) => {
+        console.error("Error removing document: ", error);
+      });
   };
-  const data = [
-    {
-      id: "ABC0",
-      picture: "Hình 1 2-4 ",
-      title: "Áo bà ba",
-      amount: 8,
-      productType: "Áo",
-      size: "XL",
-      price: 112300000,
-      salePrice: 120000000,
-    },
-    {
-      id: "ABC1",
-      picture: "Hình 122 2-4 ",
-      title: "Quần bà ba dá  asdas asdsa adsa asdas á asdsa asd asd áda",
-      amount: 0,
-      productType: "Quần",
-      size: "L",
-      description: "Mô tẩ tat rr 31 Võ Văn Hào",
-      availability: "Hết Hàng",
-      price: 2220000000,
-      salePrice: 25250505000,
-    },
-    {
-      id: "ABC2",
-      picture: "Hình 122 2-4 ",
-      title: "Giầy",
-      amount: 0,
-      productType: "Giầy",
-      size: "L",
-      description: "Mô tẩ tat rr 31 Võ Văn Hào",
-      availability: "Hết Hàng",
-      price: 2220000000,
-      salePrice: 25250505000,
-    },
-    {
-      id: "ABC3",
-      picture: "Hình 122 2-4 ",
-      title: "Quần bà ba dá  asdas asdsa adsa asdas á asdsa asd asd áda",
-      amount: 0,
-      productType: "Quần",
-      size: "L",
-      description: "Mô tẩ tat rr 31 Võ Văn Hào",
-      availability: "Hết Hàng",
-      price: 2220000000,
-      salePrice: 25250505000,
-    },
-    {
-      id: "ABC4",
-      picture: "Hình 122 2-4 ",
-      title: "Quần bà ba dá  asdas asdsa adsa asdas á asdsa asd asd áda",
-      amount: 0,
-      productType: "Quần",
-      size: "L",
-      description: "Mô tẩ tat rr 31 Võ Văn Hào",
-      availability: "Hết Hàng",
-      price: 2220000000,
-      salePrice: 25250505000,
-    },
-    {
-      id: "ABC5",
-      picture: "Hình 122 2-4 ",
-      title: "Quần bà ba dá  asdas asdsa adsa asdas á asdsa asd asd áda",
-      amount: 0,
-      productType: "Quần",
-      size: "L",
-      description: "Mô tẩ tat rr 31 Võ Văn Hào",
-      availability: "Hết Hàng",
-      price: 2220000000,
-      salePrice: 25250505000,
-    },
-    {
-      id: "ABC6",
-      picture: "Hình 122 2-4 ",
-      title: "Quần bà ba dá  asdas asdsa adsa asdas á asdsa asd asd áda",
-      amount: 0,
-      productType: "Quần",
-      size: "L",
-      description: "Mô tẩ tat rr 31 Võ Văn Hào",
-      availability: "Hết Hàng",
-      price: 2220000000,
-      salePrice: 25250505000,
-    },
-    {
-      id: "ABC7",
-      picture: "Hình 122 2-4 ",
-      title: "Quần bà ba dá  asdas asdsa adsa asdas á asdsa asd asd áda",
-      amount: 0,
-      productType: "Quần",
-      size: "L",
-      description: "Mô tẩ tat rr 31 Võ Văn Hào",
-      availability: "Hết Hàng",
-      price: 2220000000,
-      salePrice: 25250505000,
-    },
-    {
-      id: "ABC8",
-      picture: "Hình 122 2-4 ",
-      title: "Quần bà ba dá  asdas asdsa adsa asdas á asdsa asd asd áda",
-      amount: 0,
-      productType: "Quần",
-      size: "L",
-      description: "Mô tẩ tat rr 31 Võ Văn Hào",
-      availability: "Hết Hàng",
-      price: 2220000000,
-      salePrice: 25250505000,
-    },
-    {
-      id: "ABC9",
-      picture: "Hình 122 2-4 ",
-      title: "Quần bà ba dá  asdas asdsa adsa asdas á asdsa asd asd áda",
-      amount: 0,
-      productType: "Quần",
-      size: "L",
-      description: "Mô tẩ tat rr 31 Võ Văn Hào",
-      availability: "Hết Hàng",
-      price: 2220000000,
-      salePrice: 25250505000,
-    },
-    {
-      id: "ABC10",
-      picture: "Hình 122 2-4 ",
-      title: "Quần bà ba dá  asdas asdsa adsa asdas á asdsa asd asd áda",
-      amount: 0,
-      productType: "Quần",
-      size: "L",
-      description: "Mô tẩ tat rr 31 Võ Văn Hào",
-      availability: "Hết Hàng",
-      price: 2220000000,
-      salePrice: 25250505000,
-    },
-    {
-      id: "ABC11",
-      picture: "Hình 122 2-4 ",
-      title: "Quần bà ba dá  asdas asdsa adsa asdas á asdsa asd asd áda",
-      amount: 0,
-      productType: "Quần",
-      size: "L",
-      description: "Mô tẩ tat rr 31 Võ Văn Hào",
-      availability: "Hết Hàng",
-      price: 2220000000,
-      salePrice: 25250505000,
-    },
-  ];
+  const onAddProduct = () => {
+    setDrawer(true);
+    setBodyEdit("");
+  };
+
+  const handleClickGetAll = () => {
+    let tutorialsRef = firebase.firestore().collection("/product");
+    /*Cách 1 */
+    tutorialsRef.onSnapshot((querySnapshot) => {
+      const data = [];
+      querySnapshot.forEach((doc) => {
+        const { title, type, size, sale, cost, amount, picture } = doc.data();
+        data.push({
+          key: doc.id,
+          title,
+          type,
+          size,
+          cost,
+          amount,
+          picture,
+          sale,
+        });
+        console.log(data, "data");
+      });
+      setDataFireBase(data);
+    });
+  };
   // / Search toàng cục
   const handleSearchTable = (value) => {
-    const filterTable = data.filter((o) =>
+    const filterTable = dataFireBase.filter((o) =>
       Object.keys(o).some((k) =>
         String(o[k]).toLowerCase().includes(value.toLowerCase())
       )
@@ -265,49 +209,44 @@ function AdminProduct(props) {
   return (
     <div>
       <Card style={{ borderRadius: "10px" }} size="small">
-        <Row>
-          <Col xs={24} md={24} lg={10}>
-            <Input.Search
-              placeholder="Search by..."
-              enterButton
-              onSearch={handleSearchTable}
-              allowClear={true}
-            />
-          </Col>
-          <Col xs={24} md={24} lg={3} offset={6}>
-            <Button type="primary" block icon={<PlusSquareOutlined />}>
-              Add product
-            </Button>
-          </Col>
+        <Row style={{ display: "flex", justifyContent: "space-between" }}>
+          <div>
+            <Col>
+              <Input.Search
+                placeholder="Search by..."
+                enterButton
+                onSearch={handleSearchTable}
+                allowClear={true}
+              />
+            </Col>
+          </div>
+          <AdminProduct_ViewModal openModal={openModal} dataView={dataView} />
+          <div>
+            <Col>
+              <Button
+                type="primary"
+                onClick={onAddProduct}
+                block
+                icon={<PlusSquareOutlined />}
+              >
+                Add Product
+              </Button>
+            </Col>
+          </div>
         </Row>
-
+        {/* Start Drawer */}
+        <AddProduct drawer={drawer} setDrawer={setDrawer} bodyEdit={bodyEdit} />
+        {/* End Drawer */}
         <Row>
-          <Col xs={24} md={24} lg={19}>
+          <Col xs={24} md={24} lg={24}>
             <Table
               columns={columns}
-              dataSource={filterTable == null ? data : filterTable}
+              dataSource={filterTable == null ? dataFireBase : filterTable}
               pagination={{ pageSize: 10 }}
               size="small"
               scroll={{ y: 300 }}
               rowKey="id"
             />
-          </Col>
-          <Col xs={24} md={24} lg={5}>
-            <Card
-              hoverable
-              style={{ width: "100%" }}
-              cover={
-                <img
-                  alt="example"
-                  src="https://os.alipayobjects.com/rmsportal/QBnOOoLaAfKPirc.png"
-                />
-              }
-            >
-              <Meta
-                title="Europe Street beat"
-                description="www.instagram.com"
-              />
-            </Card>
           </Col>
         </Row>
       </Card>

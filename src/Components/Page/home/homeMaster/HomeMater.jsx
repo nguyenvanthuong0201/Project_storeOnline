@@ -4,6 +4,7 @@ import HomeBannerBottom from "./component/HomeBannerBottom";
 import HomeBannerRight from "./component/HomeBannerRight";
 import HomeCarousel from "./component/HomeCarousel";
 import HomeSlideProduct from "./component/HomeSlideProduct";
+import "./homeMaster.css";
 
 class HomeMater extends Component {
   render() {
