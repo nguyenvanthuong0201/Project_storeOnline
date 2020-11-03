@@ -1,20 +1,65 @@
-import React, { useState } from "react";
-import { Button, Card, Col, Drawer, Input, PageHeader, Row } from "antd";
+import React, { useEffect, useState } from "react";
+import {
+  Button,
+  Card,
+  Col,
+  Drawer,
+  Input,
+  notification,
+  PageHeader,
+  Popconfirm,
+  Row,
+} from "antd";
 import { Table } from "antd";
-import { PlusSquareOutlined } from "@ant-design/icons";
+import {
+  DeleteOutlined,
+  EyeOutlined,
+  PlusSquareOutlined,
+} from "@ant-design/icons";
 import CptCustomer_information from "./component/CptCustomer_information";
 import CptCustomer_drawerAdd from "./component/CptCustomer_drawerAdd";
+import firebase from "../../../../utils/firebase";
+import { format } from "../../../../data/dataAdminProduct";
+const moment = require("moment");
 
 function AdminCustomer(props) {
   const [drawer, setDrawer] = useState(false);
+  const [dataFireBase, setDataFireBase] = useState([]);
   console.log("bool", drawer);
   const [filterTable, setFilterTable] = useState(null);
+  const [dataView, setDataView] = useState("");
+
+  const handleView = (record) => {
+    setDataView(record);
+  };
+  useEffect(() => {
+    handleClickGetAll();
+  }, []);
   const columns = [
     {
-      title: "CustomerId",
-      dataIndex: "customerId",
+      title: "Action",
+      dataIndex: "action",
       width: "10%",
       fixed: "left",
+      render: (text, record) => (
+        <>
+          <Button
+            style={{ marginRight: "3px" }}
+            type="primary"
+            icon={<EyeOutlined />}
+            onClick={() => handleView(record)}
+          />
+          <Popconfirm
+            placement="bottom"
+            title="Are you sure delete this product?"
+            onConfirm={() => handleDelete(record.key)}
+            okText="Yes"
+            cancelText="No"
+          >
+            <Button type="danger" icon={<DeleteOutlined />} />
+          </Popconfirm>
+        </>
+      ),
     },
     {
       title: "First Name",
@@ -44,21 +89,10 @@ function AdminCustomer(props) {
       width: "20%",
     },
     {
-      title: "City",
-      dataIndex: "city",
+      title: "Create date",
+      dataIndex: "createDate",
       width: "10%",
-
-      filterMultiple: false,
-      onFilter: (value, record) => record.city.indexOf(value) === 0,
-      sorter: (a, b) => a.city.length - b.city.length,
-      sortDirections: ["descend", "ascend"],
-    },
-    {
-      title: "Registration date",
-      dataIndex: "registrationDate",
-      width: "10%",
-      defaultSortOrder: "descend",
-      sorter: (a, b) => a.registrationDate.length - b.registrationDate.length,
+      render: (createDate) => <>{moment(createDate).format(format.dateTime)}</>,
     },
     {
       title: "Bill",
@@ -67,121 +101,59 @@ function AdminCustomer(props) {
       defaultSortOrder: "descend",
       sorter: (a, b) => a.bill - b.bill,
     },
-
-    {
-      title: "Action",
-      dataIndex: "action",
-      width: "5%",
-      fixed: "right",
-      render: (text, record) => (
-        <>
-          <Button
-            style={{ width: "50px" }}
-            type="primary"
-            size="small"
-            onClick={() => handleDelete(record.id)}
-          >
-            Delete
-          </Button>
-        </>
-      ),
-    },
   ];
   const handleDelete = (id) => {
-    console.log(id);
+    firebase
+      .firestore()
+      .collection("/customer")
+      .doc(id)
+      .delete()
+      .then(() => {
+        console.log("Document successfully deleted!");
+        notification.success({
+          message: "Delete success !!!!!",
+          placement: "bottomLeft",
+          style: { backgroundColor: "greenyellow" },
+        });
+      })
+      .catch((error) => {
+        console.error("Error removing document: ", error);
+      });
   };
-  const data = [
-    {
-      customerId: "ABC05681",
-      firstName: "Thương ",
-      lastName: "Nguyễn Văn",
-      phone: "0388846810",
-      email: "nguyenvanthuong0201@gmail.com",
-      address: "32 Võ Văn Hào",
-      city: "Khánh Hòa",
-      registrationDate: 20022020,
-      bill: 101,
-    },
-    {
-      customerId: "ABC05682",
-      firstName: "Khiêm ",
-      lastName: "Nguyễn Văn",
-      phone: "123456789",
-      email: "nguyenvanthuong0201@gmail.com",
-      address: "32 Võ Văn Hào",
-      city: "Hồ Chí Minh",
-      registrationDate: 20022020,
-      bill: 1,
-    },
-    {
-      customerId: "ABC05684",
-      firstName: "An ",
-      lastName: "Nguyễn Văn",
-      phone: "123456789",
-      email: "nguyenvanthuong0201@gmail.com",
-      address: "32 Võ Văn Hào",
-      city: "Hồ Chí Minh",
-      registrationDate: 20022020,
-      bill: 1,
-    },
-    {
-      customerId: "ABC05683",
-      firstName: "Trọng ",
-      lastName: "Nguyễn Văn",
-      phone: "123456789",
-      email: "nguyenvanthuong0201@gmail.com",
-      address: "32 Võ Văn Hào",
-      city: "Hồ Chí Minh",
-      registrationDate: 20022020,
-      bill: 1,
-    },
-    {
-      customerId: "ABC05685",
-      firstName: "Trọng ",
-      lastName: "Nguyễn Văn",
-      phone: "123456789",
-      email: "nguyenvanthuong0201@gmail.com",
-      address: "32 Võ Văn Hào",
-      city: "Hồ Chí Minh",
-      registrationDate: 20022020,
-      bill: 1,
-    },
-    {
-      customerId: "ABC05686",
-      firstName: "Hoàng ",
-      lastName: "Nguyễn Văn",
-      phone: "123456789",
-      email: "nguyenvanthuong0201@gmail.com",
-      address: "32 Võ Văn Hào",
-      city: "Hồ Chí Minh",
-      registrationDate: 20022020,
-      bill: 1,
-    },
-    {
-      customerId: "ABC05687",
-      firstName: "Hoàng ",
-      lastName: "Nguyễn Văn",
-      phone: "123456789",
-      email: "nguyenvanthuong0201@gmail.com",
-      address: "32 Võ Văn Hào",
-      city: "Hồ Chí Minh",
-      registrationDate: 20022020,
-      bill: 1,
-    },
-    {
-      customerId: "ABC05688",
-      firstName: "Hoàng ",
-      lastName: "Nguyễn Văn",
-      phone: "123456789",
-      email: "nguyenvanthuong0201@gmail.com",
-      address: "32 Võ Văn Hào",
-      city: "Hồ Chí Minh",
-      registrationDate: 20022020,
-      bill: 1,
-    },
-  ];
+
+  const handleClickGetAll = () => {
+    let tutorialsRef = firebase.firestore().collection("/customer");
+    tutorialsRef.onSnapshot((querySnapshot) => {
+      const data = [];
+      querySnapshot.forEach((doc) => {
+        const {
+          firstName,
+          lastName,
+          password,
+          phone,
+          email,
+          address,
+          picture,
+          createDay,
+        } = doc.data();
+        data.push({
+          key: doc.id,
+          firstName,
+          lastName,
+          password,
+          phone,
+          email,
+          address,
+          picture,
+          createDay,
+        });
+        console.log("dataCustomer", data);
+      });
+      setDataFireBase(data);
+    });
+  };
   const handleSearchTable = (value) => {
-    const filterTable = data.filter((o) =>
+    const filterTable = dataFireBase.filter((o) =>
       Object.keys(o).some((k) =>
         String(o[k]).toLowerCase().includes(value.toLowerCase())
       )
@@ -222,18 +194,18 @@ function AdminCustomer(props) {
               <Col xs={24} md={24} lg={24}>
                 <Table
                   columns={columns}
-                  dataSource={filterTable == null ? data : filterTable}
+                  dataSource={filterTable == null ? dataFireBase : filterTable}
                   pagination={{ pageSize: 10 }}
                   size="small"
                   scroll={{ x: 1500, y: 350 }}
-                  rowKey="customerId"
+                  rowKey="createDay"
                   style={{ marginTop: "10px" }}
                 />
               </Col>
             </Row>
           </Col>
           <Col xs={24} md={8} lg={8} offset={1}>
-            <CptCustomer_information />
+            <CptCustomer_information dataView={dataView} />
           </Col>
         </Row>
       </Card>

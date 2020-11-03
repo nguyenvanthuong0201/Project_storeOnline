@@ -52,11 +52,9 @@ const expandedRowRender = (row) => {
   );
 };
 
-const CptCustomer_information = () => {
-  //   const onFinish = (values) => {
-  //     console.log(values);
-  //   };
-
+const CptCustomer_information = (props) => {
+  const { dataView } = props;
+  console.log("dataView :>> ", dataView);
   const columns = [
     { title: "BillId", dataIndex: "billId" },
     { title: "Date", dataIndex: "date" },
@@ -85,23 +83,24 @@ const CptCustomer_information = () => {
     <div className="card-container">
       <Tabs type="card" size="small">
         <TabPane tab="Information" key="1">
-          <Image
-            className="Information__img"
-            src="https://zos.alipayobjects.com/rmsportal/jkjgkEfvpUPVyRjUImniVslZfWPnJuuZ.png"
-          />
+          <Image className="Information__img" src={dataView.picture} />
 
           <Descriptions
             bordered
             column={{ xxl: 1, xl: 1, lg: 1, md: 1, sm: 1, xs: 1 }}
           >
             <Descriptions.Item label="Name">
-              Nguyễn Văn Thương
+              {dataView.firstName} {dataView.lastName}
             </Descriptions.Item>
             <Descriptions.Item label="Email">
-              nguyenvanthuong@gmail.com
+              {dataView.email}
             </Descriptions.Item>
-            <Descriptions.Item label="Address">32 võ văn hào</Descriptions.Item>
-            <Descriptions.Item label="Phone">0388846810</Descriptions.Item>
+            <Descriptions.Item label="Address">
+              {dataView.address}
+            </Descriptions.Item>
+            <Descriptions.Item label="Phone">
+              {dataView.phone}
+            </Descriptions.Item>
             <Descriptions.Item label="Bill">5</Descriptions.Item>
           </Descriptions>
         </TabPane>

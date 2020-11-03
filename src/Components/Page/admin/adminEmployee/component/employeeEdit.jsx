@@ -14,48 +14,81 @@ import {
 import { UploadOutlined } from "@ant-design/icons";
 import firebase from "../../../../../utils/firebase";
 
-function CptCustomer_drawerAdd(props) {
-  const { drawer, setDrawer } = props;
+function EmployeeEdit(props) {
+  const { openDrawerEdit, setOpenDrawerEdit, bodyEdit } = props;
   const [form] = Form.useForm();
   const handleOnCloseDrawer = () => {
-    setDrawer(false);
+    setOpenDrawerEdit(false);
   };
 
   const onFinish = async (value) => {
-    // form.resetFields();
-    console.log("value", value);
     const body = {
       ...value,
-      key: "",
     };
-    const id = "Customer_" + Date.now();
-    const storageRef = firebase.storage().ref("images-Customer").child(id);
-    const tutorialsRef = firebase.firestore().collection("/customer");
-    if (body.key === "") {
+
+    const id = "Employee_" + Date.now();
+    console.log(typeof value.picture, "type");
+    const storageRef = firebase.storage().ref("images-employee").child(id);
+    if (typeof body.picture === "undefined") {
+      const updateRef = firebase
+        .firestore()
+        .collection("employee")
+        .doc(bodyEdit.key);
+      updateRef
+        .set({
+          firstName: body.firstName,
+          lastName: body.lastName,
+          password: body.password,
+          phone: body.phone,
+          email: body.email,
+          address: body.address,
+          position: body.position,
+          gender: body.gender,
+          picture: bodyEdit.picture,
+        })
+        .then((docRef) => {
+          handleOnCloseDrawer();
+          notification.success({
+            message: "Update success !!!!!",
+            placement: "bottomLeft",
+            style: { backgroundColor: "greenyellow" },
+          });
+        })
+        .catch((error) => {
+          console.error("Error adding document: ", error);
+        });
+    } else {
       await storageRef.put(body.picture[0].originFileObj);
+      console.log("Pic", body.picture[0].originFileObj);
       storageRef.getDownloadURL().then((url) => {
-        console.log("url", url);
-        tutorialsRef
-          .add({
-            createDay: Date.now(),
+        console.log("Hêllo 12222");
+        console.log("Hêllo 4343", body.picture[0].originFileObj);
+        const updateRef = firebase
+          .firestore()
+          .collection("employee")
+          .doc(bodyEdit.key);
+        updateRef
+          .set({
             firstName: body.firstName,
             lastName: body.lastName,
             password: body.password,
             phone: body.phone,
             email: body.email,
             address: body.address,
+            position: body.position,
+            gender: body.gender,
             picture: url,
           })
-          .then(function (docRef) {
-            form.resetFields();
+          .then((docRef) => {
+            handleOnCloseDrawer();
             notification.success({
-              message: "Create success !!!!!",
+              message: "Update success !!!!!",
               placement: "bottomLeft",
               style: { backgroundColor: "greenyellow" },
             });
           })
-          .catch(function (error) {
-            console.error("Error adding Tutorial: ", error);
+          .catch((error) => {
+            console.error("Error adding document: ", error);
           });
       });
     }
@@ -77,13 +110,14 @@ function CptCustomer_drawerAdd(props) {
     <div>
       <Drawer
         width={512}
-        title="Create customer"
-        visible={drawer}
+        title="Update customer"
+        visible={openDrawerEdit}
         onClose={handleOnCloseDrawer}
         placement="right"
         maskClosable={true} /// Form nhấn bên ngoài để đóng ngăn
       >
         <Form
+          key={bodyEdit.key}
           form={form}
           name="basic"
           onFinish={onFinish}
@@ -106,6 +140,7 @@ function CptCustomer_drawerAdd(props) {
           </Form.Item>
           <Form.Item
             hasFeedback
+            initialValue={bodyEdit.firstName}
             label="First Name"
             name="firstName"
             rules={[
@@ -117,6 +152,7 @@ function CptCustomer_drawerAdd(props) {
           <Form.Item
             hasFeedback
             label="last Name"
+            initialValue={bodyEdit.lastName}
             name="lastName"
             rules={[
               { required: true, message: "Please input your last name!" },
@@ -128,13 +164,28 @@ function CptCustomer_drawerAdd(props) {
             hasFeedback
             label="Password"
             name="password"
+            initialValue={bodyEdit.password}
             rules={[{ required: true, message: "Please input your password!" }]}
           >
             <Input.Password />
           </Form.Item>
           <Form.Item
+            hasFeedback
+            label="Gender"
+            name="gender"
+            initialValue={bodyEdit.gender}
+            rules={[{ required: true, message: "Please input your type!" }]}
+          >
+            <Select>
+              <Select.Option value="Male">Male</Select.Option>
+              <Select.Option value="Female">Female</Select.Option>
+              <Select.Option value="Other">Other</Select.Option>
+            </Select>
+          </Form.Item>
+          <Form.Item
             label="Phone "
             name="phone"
+            initialValue={bodyEdit.phone}
             hasFeedback
             rules={[
               {
@@ -150,6 +201,7 @@ function CptCustomer_drawerAdd(props) {
           <Form.Item
             label="Email"
             name="email"
+            initialValue={bodyEdit.email}
             hasFeedback
             rules={[{ required: true, message: "Please input your Email!" }]}
           >
@@ -158,31 +210,33 @@ function CptCustomer_drawerAdd(props) {
           <Form.Item
             label="Address"
             name="address"
+            initialValue={bodyEdit.address}
             hasFeedback
             rules={[{ required: true, message: "Please input your address!" }]}
           >
             <Input />
           </Form.Item>
-          <Form.Item shouldUpdate={true}>
-            {() => (
-              <Fragment>
-                <Button
-                  type="primary"
-                  htmlType="submit"
-                  disabled={
-                    !form.isFieldsTouched(true) ||
-                    form.getFieldsError().filter(({ errors }) => errors.length)
-                      .length
-                  }
-                >
-                  Create
-                </Button>
-                {/* Form button reset */}
-                <Button htmlType="reset" onClick={() => form.resetFields()}>
-                  reset
-                </Button>
-              </Fragment>
-            )}
+          <Form.Item
+            hasFeedback
+            label="Position"
+            name="position"
+            initialValue={bodyEdit.position}
+            rules={[{ required: true, message: "Please input your type!" }]}
+          >
+            <Select>
+              <Select.Option value="Admin">Admin</Select.Option>
+              <Select.Option value="Employee">employee</Select.Option>
+            </Select>
+          </Form.Item>
+          <Form.Item>
+            <Fragment>
+              <Button type="primary" htmlType="submit">
+                Update
+              </Button>
+              <Button htmlType="reset" onClick={() => form.resetFields()}>
+                reset
+              </Button>
+            </Fragment>
           </Form.Item>
         </Form>
       </Drawer>
@@ -190,4 +244,4 @@ function CptCustomer_drawerAdd(props) {
   );
 }
 
-export default CptCustomer_drawerAdd;
+export default EmployeeEdit;

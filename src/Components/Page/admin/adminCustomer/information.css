@@ -3,8 +3,10 @@
     width: 90%;
 }
 .Information__img img.ant-image-img{
-    border-radius: 50%;
-    width: 100px;
+        border-radius: 88%;
+        width: 80px;
+        height: 80px;
+    
 }
 .Information__img img.ant-image-img:hover{
     cursor: pointer;
@@ -14,4 +16,5 @@
     text-align: center;
     margin-bottom: 10px;
     background-color: #00C2CB;
+    height: 80px;
 }

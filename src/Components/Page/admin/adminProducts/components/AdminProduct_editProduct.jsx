@@ -1,4 +1,4 @@
-import React, { Fragment } from "react";
+import React, { Fragment, useEffect, useState } from "react";
 import PropTypes from "prop-types";
 import {
   Form,
@@ -11,36 +11,62 @@ import {
   Divider,
   message,
   notification,
-  InputNumber,
 } from "antd";
 import { UploadOutlined } from "@ant-design/icons";
 import { sizeAdminProduct } from "../../../../../data/dataAdminProduct";
 import firebase from "../../../../../utils/firebase";
 
-function AddProduct(props) {
-  const { drawer, setDrawer } = props;
+function EditProduct(props) {
+  const { drawerEdit, setDrawerEdit, bodyEdit } = props;
+
   const [form] = Form.useForm();
-
   const handleOnCloseDrawer = () => {
-    setDrawer(false);
+    setDrawerEdit(false);
   };
-
+  console.log("bodyEdit", bodyEdit);
   const onFinish = async (value) => {
     const body = {
       ...value,
-      key: "",
     };
     console.log("body", body);
     const id = "Product_" + Date.now();
     const storageRef = firebase.storage().ref("images").child(id);
-    const tutorialsRef = firebase.firestore().collection("/product");
-    if (body.key === "") {
+    if (typeof body.picture === "undefined") {
+      console.log("heello");
+      const updateRef = firebase
+        .firestore()
+        .collection("product")
+        .doc(bodyEdit.key);
+      updateRef
+        .set({
+          title: body.title,
+          type: body.type,
+          size: body.size,
+          sale: body.sale,
+          cost: body.cost,
+          amount: body.amount,
+          picture: bodyEdit.picture,
+        })
+        .then((docRef) => {
+          handleOnCloseDrawer();
+          notification.success({
+            message: "Update success !!!!!",
+            placement: "bottomLeft",
+            style: { backgroundColor: "greenyellow" },
+          });
+        })
+        .catch((error) => {
+          console.error("Error adding document: ", error);
+        });
+    } else {
       await storageRef.put(body.picture[0].originFileObj);
       storageRef.getDownloadURL().then((url) => {
-        console.log("url", url);
-        tutorialsRef
-          .add({
-            createDate: Date.now(),
+        const updateRef = firebase
+          .firestore()
+          .collection("product")
+          .doc(bodyEdit.key);
+        updateRef
+          .set({
             title: body.title,
             type: body.type,
             size: body.size,
@@ -49,15 +75,16 @@ function AddProduct(props) {
             amount: body.amount,
             picture: url,
           })
-          .then(function (docRef) {
-            form.resetFields();
+          .then((docRef) => {
+            handleOnCloseDrawer();
             notification.success({
-              message: "Create success !!!!!",
+              message: "Update success !!!!!",
               placement: "bottomLeft",
+              style: { backgroundColor: "greenyellow" },
             });
           })
-          .catch(function (error) {
-            console.error("Error adding Tutorial: ", error);
+          .catch((error) => {
+            console.error("Error adding document: ", error);
           });
       });
     }
@@ -66,7 +93,6 @@ function AddProduct(props) {
   const onFinishFailed = (onFinishFailed) => {
     console.log("onFinishFailed", onFinishFailed);
   };
-
   const normFile = (e) => {
     console.log("Upload event:", e);
     if (Array.isArray(e)) {
@@ -74,16 +100,12 @@ function AddProduct(props) {
     }
     return e && e.fileList;
   };
-  const onChange = (e) => {
-    let dot = e.target.v;
-  };
-
   return (
     <div>
       <Drawer
         width={512}
-        title="Add Product"
-        visible={drawer}
+        title="Update Product"
+        visible={drawerEdit}
         onClose={handleOnCloseDrawer}
         placement="right"
         maskClosable={true} /// Form nhấn bên ngoài để đóng ngăn
@@ -112,6 +134,7 @@ function AddProduct(props) {
           <Form.Item
             hasFeedback
             label="Title"
+            initialValue={bodyEdit.title}
             name="title"
             rules={[{ required: true, message: "Please input your title!" }]}
           >
@@ -121,6 +144,7 @@ function AddProduct(props) {
             hasFeedback
             label="Type"
             name="type"
+            initialValue={bodyEdit.type}
             rules={[{ required: true, message: "Please input your type!" }]}
           >
             <Select>
@@ -132,27 +156,30 @@ function AddProduct(props) {
             hasFeedback
             label="Amount "
             name="amount"
-            rules={[{ type: "number", min: 0, max: 999 }]}
+            initialValue={bodyEdit.amount}
+            rules={[{ required: true, message: "Please input your amount !" }]}
           >
-            <InputNumber style={{ width: "100%" }} />
+            <Input type="number" />
           </Form.Item>
           <Form.Item
             hasFeedback
             label="Sale "
             name="sale"
-            rules={[{ type: "number", min: 0, max: 999999999999999 }]}
+            initialValue={bodyEdit.sale}
+            rules={[{ required: true, message: "Please input your sale !" }]}
           >
-            <InputNumber suffix="₫" style={{ width: "100%" }} />
+            <Input type="number" suffix="₫" s />
           </Form.Item>
           <Form.Item
             hasFeedback
             label="Cost"
             name="cost"
-            rules={[{ type: "number", min: 0, max: 999999999999999 }]}
+            initialValue={bodyEdit.cost}
+            rules={[{ required: true, message: "Please input your cost!" }]}
           >
-            <InputNumber suffix="₫" style={{ width: "100%" }} />
+            <Input type="number" suffix="₫" />
           </Form.Item>
-          <Form.Item label="Size" name="size">
+          <Form.Item label="Size" name="size" initialValue={bodyEdit.size}>
             <Checkbox.Group options={sizeAdminProduct} />
           </Form.Item>
           <Divider />
@@ -164,12 +191,15 @@ function AddProduct(props) {
                   type="primary"
                   htmlType="submit"
                   disabled={
-                    !form.isFieldsTouched(true) ||
-                    form.getFieldsError().filter(({ errors }) => errors.length)
-                      .length
+                    bodyEdit
+                      ? ""
+                      : !form.isFieldsTouched(true) ||
+                        form
+                          .getFieldsError()
+                          .filter(({ errors }) => errors.length).length
                   }
                 >
-                  Add
+                  Update
                 </Button>
                 {/* Form button reset */}
                 <Button htmlType="reset" onClick={() => form.resetFields()}>
@@ -184,4 +214,4 @@ function AddProduct(props) {
   );
 }
 
-export default AddProduct;
+export default EditProduct;

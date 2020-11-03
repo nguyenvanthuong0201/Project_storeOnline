@@ -14,11 +14,11 @@ import {
 import { UploadOutlined } from "@ant-design/icons";
 import firebase from "../../../../../utils/firebase";
 
-function CptCustomer_drawerAdd(props) {
-  const { drawer, setDrawer } = props;
+function EmployeeAdd(props) {
+  const { openDrawer, setOpenDrawer } = props;
   const [form] = Form.useForm();
   const handleOnCloseDrawer = () => {
-    setDrawer(false);
+    setOpenDrawer(false);
   };
 
   const onFinish = async (value) => {
@@ -28,9 +28,9 @@ function CptCustomer_drawerAdd(props) {
       ...value,
       key: "",
     };
-    const id = "Customer_" + Date.now();
-    const storageRef = firebase.storage().ref("images-Customer").child(id);
-    const tutorialsRef = firebase.firestore().collection("/customer");
+    const id = "Employee_" + Date.now();
+    const storageRef = firebase.storage().ref("images-employee").child(id);
+    const tutorialsRef = firebase.firestore().collection("/employee");
     if (body.key === "") {
       await storageRef.put(body.picture[0].originFileObj);
       storageRef.getDownloadURL().then((url) => {
@@ -44,6 +44,8 @@ function CptCustomer_drawerAdd(props) {
             phone: body.phone,
             email: body.email,
             address: body.address,
+            position: body.position,
+            gender: body.gender,
             picture: url,
           })
           .then(function (docRef) {
@@ -78,7 +80,7 @@ function CptCustomer_drawerAdd(props) {
       <Drawer
         width={512}
         title="Create customer"
-        visible={drawer}
+        visible={openDrawer}
         onClose={handleOnCloseDrawer}
         placement="right"
         maskClosable={true} /// Form nhấn bên ngoài để đóng ngăn
@@ -133,6 +135,18 @@ function CptCustomer_drawerAdd(props) {
             <Input.Password />
           </Form.Item>
           <Form.Item
+            hasFeedback
+            label="Gender"
+            name="gender"
+            rules={[{ required: true, message: "Please input your type!" }]}
+          >
+            <Select>
+              <Select.Option value="Male">Male</Select.Option>
+              <Select.Option value="Female">Female</Select.Option>
+              <Select.Option value="Other">Other</Select.Option>
+            </Select>
+          </Form.Item>
+          <Form.Item
             label="Phone "
             name="phone"
             hasFeedback
@@ -163,6 +177,17 @@ function CptCustomer_drawerAdd(props) {
           >
             <Input />
           </Form.Item>
+          <Form.Item
+            hasFeedback
+            label="Position"
+            name="position"
+            rules={[{ required: true, message: "Please input your type!" }]}
+          >
+            <Select>
+              <Select.Option value="Admin">Admin</Select.Option>
+              <Select.Option value="Employee">employee</Select.Option>
+            </Select>
+          </Form.Item>
           <Form.Item shouldUpdate={true}>
             {() => (
               <Fragment>
@@ -190,4 +215,4 @@ function CptCustomer_drawerAdd(props) {
   );
 }
 
-export default CptCustomer_drawerAdd;
+export default EmployeeAdd;

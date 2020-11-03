@@ -1,25 +1,120 @@
-import React, { useState } from "react";
-import { Button, Card, Col, Image, Input, Row } from "antd";
+import React, { useEffect, useState } from "react";
+import {
+  Button,
+  Card,
+  Col,
+  Image,
+  Input,
+  notification,
+  Popconfirm,
+  Row,
+} from "antd";
 import { Table } from "antd";
-import { PlusSquareOutlined } from "@ant-design/icons";
+import {
+  DeleteOutlined,
+  EditOutlined,
+  EyeOutlined,
+  PlusSquareOutlined,
+} from "@ant-design/icons";
 import Meta from "antd/lib/card/Meta";
+import EmployeeAdd from "./component/employeeAdd";
+import firebase from "../../../../utils/firebase";
+import { format } from "../../../../data/dataAdminProduct";
+import EmployeeEdit from "./component/employeeEdit";
 
-AdminEmployee.propTypes = {};
+const moment = require("moment");
 
 function AdminEmployee(props) {
   const [filterTable, setFilterTable] = useState(null);
+  const [openDrawer, setOpenDrawer] = useState(false);
+  const [openDrawerEdit, setOpenDrawerEdit] = useState(false);
+  const [dataFireBase, setDataFireBase] = useState([]);
+  const [bodyEdit, setBodyEdit] = useState("");
+
+  useEffect(() => {
+    handleClickGetAll();
+  }, []);
+
+  const handleClickGetAll = () => {
+    let tutorialsRef = firebase.firestore().collection("/employee");
+    /*Cách 1 */
+    tutorialsRef.onSnapshot((querySnapshot) => {
+      const data = [];
+      querySnapshot.forEach((doc) => {
+        const {
+          firstName,
+          lastName,
+          password,
+          phone,
+          email,
+          address,
+          picture,
+          position,
+          gender,
+          createDay,
+        } = doc.data();
+        data.push({
+          key: doc.id,
+          firstName,
+          lastName,
+          password,
+          phone,
+          email,
+          address,
+          picture,
+          position,
+          gender,
+          createDay,
+        });
+        console.log(data, "data");
+      });
+      setDataFireBase(data);
+    });
+  };
   const columns = [
     {
-      title: "EmployeeId",
-      dataIndex: "employeeId",
+      title: "Action",
+      dataIndex: "action",
       width: "10%",
+      render: (text, record) => (
+        <>
+          <Button
+            type="ghost"
+            icon={<EditOutlined />}
+            style={{ backgroundColor: "yellow" }}
+            onClick={() => handleEdit(record)}
+          />
+          <Popconfirm
+            placement="bottom"
+            title="Are you sure delete this product?"
+            onConfirm={() => handleDelete(record.key)}
+            okText="Yes"
+            cancelText="No"
+          >
+            <Button type="danger" icon={<DeleteOutlined />} />
+          </Popconfirm>
+        </>
+      ),
+    },
+    {
+      title: "Avatar",
+      dataIndex: "picture",
+      width: "10%",
+      render: (createDate) => (
+        <>
+          <Image
+            style={{ width: "5px", height: "5px", cursor: "pointer" }}
+            src={createDate}
+          />
+        </>
+      ),
     },
     {
       title: "First Name",
       dataIndex: "firstName",
       width: "10%",
       defaultSortOrder: "descend",
-      sorter: (a, b) => a.firstName.length - b.firstName.length,
+      sorter: (a, b) => a.firstName - b.firstName,
     },
     {
       title: "Last Name",
@@ -73,77 +168,41 @@ function AdminEmployee(props) {
       dataIndex: "email",
     },
     {
-      title: "Action",
-      dataIndex: "action",
-      width: "15%",
-      render: (text, record) => (
-        <>
-          <Button type="primary" onClick={() => handleEdit(record)}>
-            Edit
-          </Button>
-          <Button type="dashed" onClick={() => handleDelete(record.id)}>
-            Delete
-          </Button>
-        </>
-      ),
+      title: "Create Date",
+      width: "10%",
+      dataIndex: "createDate",
+      render: (createDate) => <>{moment(createDate).format(format.dateTime)}</>,
     },
   ];
   const handleEdit = (record) => {
-    console.log(record);
+    setBodyEdit(record);
+    setOpenDrawerEdit(true);
   };
   const handleDelete = (id) => {
-    console.log(id);
+    firebase
+      .firestore()
+      .collection("/employee")
+      .doc(id)
+      .delete()
+      .then(() => {
+        notification.success({
+          message: "Delete success !!!!!",
+          placement: "bottomLeft",
+          style: { backgroundColor: "greenyellow" },
+        });
+      })
+      .catch((error) => {
+        console.error("Error removing document: ", error);
+      });
   };
-  const data = [
-    {
-      employeeId: "EM1",
-      firstName: "Thương",
-      lastName: "Nguyễn Văn",
-      position: "Admin",
-      gender: "Male",
-      phone: 8438884810,
-      email: "nguyenvanthuong0201@gmail.com",
-    },
-    {
-      employeeId: "EM2",
-      firstName: "Trung",
-      lastName: "Nguyễn Văn",
-      position: "Admin",
-      gender: "Male",
-      phone: 8438884810,
-      email: "nguyenvanthuong0201@gmail.com",
-    },
-    {
-      employeeId: "EM3",
-      firstName: "Sự",
-      lastName: "Nguyễn Văn",
-      position: "Employee",
-      gender: "Male",
-      phone: 8438884810,
-      email: "nguyenvanthuong0201@gmail.com",
-    },
-    {
-      employeeId: "EM4",
-      firstName: "Sự",
-      lastName: "Nguyễn Văn",
-      position: "Employee",
-      gender: "Male",
-      phone: 8438884810,
-      email: "nguyenvanthuong0201@gmail.com",
-    },
-    {
-      employeeId: "EM5",
-      firstName: "Thanh",
-      lastName: "Nguyễn Văn",
-      position: "Employee",
-      gender: "Female",
-      phone: 8438884810,
-      email: "nguyenvanthuong0201@gmail.com",
-    },
-  ];
+  const handleOpenDrawer = () => {
+    setOpenDrawer(true);
+    setOpenDrawerEdit(false);
+  };
+
   // / Search toàng cục
   const handleSearchTable = (value) => {
-    const filterTable = data.filter((o) =>
+    const filterTable = dataFireBase.filter((o) =>
       Object.keys(o).some((k) =>
         String(o[k]).toLowerCase().includes(value.toLowerCase())
       )
@@ -164,21 +223,35 @@ function AdminEmployee(props) {
             />
           </Col>
           <Col xs={24} md={24} lg={3} offset={11}>
-            <Button type="primary" block icon={<PlusSquareOutlined />}>
+            <Button
+              type="primary"
+              block
+              icon={<PlusSquareOutlined />}
+              onClick={handleOpenDrawer}
+            >
               Add employee
             </Button>
           </Col>
         </Row>
-
+        {/* Add Drawer */}
+        <EmployeeAdd openDrawer={openDrawer} setOpenDrawer={setOpenDrawer} />
+        {/* Add Drawer */}
+        {/* Edit Drawer */}
+        <EmployeeEdit
+          openDrawerEdit={openDrawerEdit}
+          setOpenDrawerEdit={setOpenDrawerEdit}
+          bodyEdit={bodyEdit}
+        />
+        {/* Edit Drawer */}
         <Row>
           <Col xs={24} md={24} lg={24}>
             <Table
               columns={columns}
-              dataSource={filterTable == null ? data : filterTable}
+              dataSource={filterTable == null ? dataFireBase : filterTable}
               pagination={{ pageSize: 10 }}
               size="small"
               scroll={{ y: 300 }}
-              rowKey="id"
+              rowKey="createDate"
             />
           </Col>
         </Row>

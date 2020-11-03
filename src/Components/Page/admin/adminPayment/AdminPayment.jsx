@@ -1,22 +1,38 @@
 import React, { useState } from "react";
-import { Button, Card, Col, Input, Row } from "antd";
+import { Button, Card, Col, Input, Popconfirm, Row } from "antd";
 import { Table } from "antd";
+import { DeleteOutlined, EyeOutlined } from "@ant-design/icons";
 
 function AdminPayment(props) {
   const [filterTable, setFilterTable] = useState(null);
+
   const columns = [
     {
-      title: "PaymentId",
-      dataIndex: "paymentId",
-      width: "10%",
+      title: "Action",
+      dataIndex: "action",
+      width: "7%",
       fixed: "left",
+      render: (text, record) => (
+        <>
+          <Button
+            style={{ marginRight: "3px" }}
+            type="primary"
+            icon={<EyeOutlined />}
+            onClick={() => handleView(record)}
+          />
+          <Popconfirm
+            placement="bottom"
+            title="Are you sure delete this payment?"
+            onConfirm={() => handleDelete(record.key)}
+            okText="Yes"
+            cancelText="No"
+          >
+            <Button type="danger" icon={<DeleteOutlined />} />
+          </Popconfirm>
+        </>
+      ),
     },
-    {
-      title: "CustomerId",
-      dataIndex: "customerId",
-      width: "10%",
-      fixed: "left",
-    },
+
     {
       title: "First Name",
       dataIndex: "firstName",
@@ -51,28 +67,8 @@ function AdminPayment(props) {
       width: "10%",
       sorter: (a, b) => a.price - b.price,
     },
-
-    {
-      title: "Action",
-      dataIndex: "action",
-      width: "7%",
-      fixed: "right",
-
-      render: (text, record) => (
-        <>
-          <Button type="primary" onClick={() => handleDelete(record.id)}>
-            Delete
-          </Button>
-        </>
-      ),
-    },
   ];
-  const handleEdit = (record) => {
-    console.log(record);
-  };
-  const handleDelete = (id) => {
-    console.log(id);
-  };
+
   const data = [
     {
       paymentId: "ABC8",
@@ -165,6 +161,28 @@ function AdminPayment(props) {
       price: 30000000,
     },
   ];
+  const handleDelete = (id) => {
+    // firebase
+    //   .firestore()
+    //   .collection("/customer")
+    //   .doc(id)
+    //   .delete()
+    //   .then(() => {
+    //     console.log("Document successfully deleted!");
+    //     notification.success({
+    //       message: "Delete success !!!!!",
+    //       placement: "bottomLeft",
+    //       style: { backgroundColor: "greenyellow" },
+    //     });
+    //   })
+    //   .catch((error) => {
+    //     console.error("Error removing document: ", error);
+    //   });
+    console.log("id :>> ", id);
+  };
+  const handleView = (record) => {
+    console.log("record :>> ", record);
+  };
   // / Search toàng cục
   const handleSearchTable = (value) => {
     const filterTable = data.filter((o) =>
@@ -188,7 +206,6 @@ function AdminPayment(props) {
             />
           </Col>
         </Row>
-
         <Row>
           <Col xs={24} md={24} lg={24}>
             <Table
@@ -196,7 +213,7 @@ function AdminPayment(props) {
               dataSource={filterTable == null ? data : filterTable}
               pagination={{ pageSize: 6 }}
               size="small"
-              rowKey="id"
+              rowKey="paymentId"
               scroll={{ x: 1200, y: 300 }}
             />
           </Col>

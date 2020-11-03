@@ -1,5 +1,15 @@
 import React, { useEffect, useState } from "react";
-import { Button, Card, Col, Image, Input, Row, Tag } from "antd";
+import {
+  Button,
+  Card,
+  Col,
+  Image,
+  Input,
+  notification,
+  Popconfirm,
+  Row,
+  Tag,
+} from "antd";
 import { Table } from "antd";
 import {
   PlusSquareOutlined,
@@ -8,12 +18,16 @@ import {
   DeleteOutlined,
 } from "@ant-design/icons";
 import AddProduct from "./components/AdminProduct_addProduct";
+import EditProduct from "./components/AdminProduct_editProduct";
 import firebase from "../../../../utils/firebase";
 import AdminProduct_ViewModal from "./components/AdminProduct_ViewModal";
+import { format } from "../../../../data/dataAdminProduct";
+const moment = require("moment");
 
 function AdminProduct(props) {
   const [filterTable, setFilterTable] = useState(null);
   const [drawer, setDrawer] = useState(false);
+  const [drawerEdit, setDrawerEdit] = useState(false);
   const [dataFireBase, setDataFireBase] = useState([]);
   const [bodyEdit, setBodyEdit] = useState("");
   const [openModal, setOpenModal] = useState(false);
@@ -24,7 +38,13 @@ function AdminProduct(props) {
   }, []);
   const handleView = (record) => {
     setOpenModal(true);
-    handleView(record);
+    setDataView(record);
+  };
+  const handleOk = () => {
+    setOpenModal(true);
+  };
+  const handleCancel = () => {
+    setOpenModal(false);
   };
   const columns = [
     {
@@ -44,11 +64,15 @@ function AdminProduct(props) {
             style={{ backgroundColor: "yellow" }}
             onClick={() => handleEdit(record)}
           />
-          <Button
-            type="danger"
-            icon={<DeleteOutlined />}
-            onClick={() => handleDelete(record.key)}
-          />
+          <Popconfirm
+            placement="bottom"
+            title="Are you sure delete this product?"
+            onConfirm={() => handleDelete(record.key)}
+            okText="Yes"
+            cancelText="No"
+          >
+            <Button type="danger" icon={<DeleteOutlined />} />
+          </Popconfirm>
         </>
       ),
     },
@@ -90,39 +114,8 @@ function AdminProduct(props) {
       title: "Size",
       dataIndex: "size",
       width: "10%",
-      filters: [
-        {
-          text: "S",
-          value: "S",
-        },
-        {
-          text: "M",
-          value: "M",
-        },
-        {
-          text: "L",
-          value: "L",
-        },
-        {
-          text: "XL",
-          value: "XL",
-        },
-        {
-          text: "XXL",
-          value: "XXL",
-        },
-      ],
-      filterMultiple: false,
-      onFilter: (value, record) => record.size.indexOf(value) === 0,
       sorter: (a, b) => a.size.length - b.size.length,
       sortDirections: ["descend", "ascend"],
-      render: (size) => (
-        <>
-          {size.map((si, i) => {
-            return <span key={i}>{si}|</span>;
-          })}
-        </>
-      ),
     },
     {
       title: "Price",
@@ -148,10 +141,18 @@ function AdminProduct(props) {
         </>
       ),
     },
+    {
+      title: "Create Date",
+      width: "10%",
+      dataIndex: "createDate",
+      defaultSortOrder: "descend",
+      render: (createDate) => <>{moment(createDate).format(format.dateTime)}</>,
+    },
   ];
   const handleEdit = (body) => {
     setBodyEdit(body);
-    setDrawer(true);
+    setDrawer(false);
+    setDrawerEdit(true);
   };
   const handleDelete = (id) => {
     firebase
@@ -161,9 +162,11 @@ function AdminProduct(props) {
       .delete()
       .then(() => {
         console.log("Document successfully deleted!");
-        // setdataInput({ title: "", description: "", image: "", key: "" });
-
-        // this.props.history.push("/");
+        notification.success({
+          message: "Delete success !!!!!",
+          placement: "bottomLeft",
+          style: { backgroundColor: "greenyellow" },
+        });
       })
       .catch((error) => {
         console.error("Error removing document: ", error);
@@ -180,7 +183,16 @@ function AdminProduct(props) {
     tutorialsRef.onSnapshot((querySnapshot) => {
       const data = [];
       querySnapshot.forEach((doc) => {
-        const { title, type, size, sale, cost, amount, picture } = doc.data();
+        const {
+          title,
+          type,
+          size,
+          sale,
+          cost,
+          amount,
+          picture,
+          createDate,
+        } = doc.data();
         data.push({
           key: doc.id,
           title,
@@ -190,6 +202,7 @@ function AdminProduct(props) {
           amount,
           picture,
           sale,
+          createDate,
         });
         console.log(data, "data");
       });
@@ -220,7 +233,12 @@ function AdminProduct(props) {
               />
             </Col>
           </div>
-          <AdminProduct_ViewModal openModal={openModal} dataView={dataView} />
+          <AdminProduct_ViewModal
+            openModal={openModal}
+            dataView={dataView}
+            handleOk={handleOk}
+            handleCancel={handleCancel}
+          />
           <div>
             <Col>
               <Button
@@ -235,7 +253,12 @@ function AdminProduct(props) {
           </div>
         </Row>
         {/* Start Drawer */}
-        <AddProduct drawer={drawer} setDrawer={setDrawer} bodyEdit={bodyEdit} />
+        <EditProduct
+          drawerEdit={drawerEdit}
+          setDrawerEdit={setDrawerEdit}
+          bodyEdit={bodyEdit}
+        />
+        <AddProduct drawer={drawer} setDrawer={setDrawer} />
         {/* End Drawer */}
         <Row>
           <Col xs={24} md={24} lg={24}>
@@ -244,8 +267,7 @@ function AdminProduct(props) {
               dataSource={filterTable == null ? dataFireBase : filterTable}
               pagination={{ pageSize: 10 }}
               size="small"
-              scroll={{ y: 300 }}
-              rowKey="id"
+              rowKey="createDate"
             />
           </Col>
         </Row>
