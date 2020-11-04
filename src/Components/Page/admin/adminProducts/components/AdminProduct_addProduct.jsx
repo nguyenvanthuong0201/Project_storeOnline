@@ -32,7 +32,7 @@ function AddProduct(props) {
     };
     console.log("body", body);
     const id = "Product_" + Date.now();
-    const storageRef = firebase.storage().ref("images").child(id);
+    const storageRef = firebase.storage().ref("images-product").child(id);
     const tutorialsRef = firebase.firestore().collection("/product");
     if (body.key === "") {
       await storageRef.put(body.picture[0].originFileObj);
@@ -47,13 +47,15 @@ function AddProduct(props) {
             sale: body.sale,
             cost: body.cost,
             amount: body.amount,
+            option: body.option,
             picture: url,
           })
           .then(function (docRef) {
-            form.resetFields();
+            // form.resetFields();
             notification.success({
               message: "Create success !!!!!",
               placement: "bottomLeft",
+              style: { backgroundColor: "greenyellow" },
             });
           })
           .catch(function (error) {
@@ -126,6 +128,18 @@ function AddProduct(props) {
             <Select>
               <Select.Option value="Shirt">Shirt</Select.Option>
               <Select.Option value="Pants">Pants</Select.Option>
+            </Select>
+          </Form.Item>
+          <Form.Item
+            hasFeedback
+            label="Option"
+            name="option"
+            rules={[{ required: true, message: "Please input your Option!" }]}
+          >
+            <Select>
+              <Select.Option value="New">New</Select.Option>
+              <Select.Option value="Promotion">Promotion</Select.Option>
+              <Select.Option value="Other">Other</Select.Option>
             </Select>
           </Form.Item>
           <Form.Item

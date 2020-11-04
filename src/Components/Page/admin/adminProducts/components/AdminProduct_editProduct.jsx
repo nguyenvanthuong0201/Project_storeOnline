@@ -30,9 +30,8 @@ function EditProduct(props) {
     };
     console.log("body", body);
     const id = "Product_" + Date.now();
-    const storageRef = firebase.storage().ref("images").child(id);
+    const storageRef = firebase.storage().ref("images-product").child(id);
     if (typeof body.picture === "undefined") {
-      console.log("heello");
       const updateRef = firebase
         .firestore()
         .collection("product")
@@ -45,6 +44,7 @@ function EditProduct(props) {
           sale: body.sale,
           cost: body.cost,
           amount: body.amount,
+          option: body.option,
           picture: bodyEdit.picture,
         })
         .then((docRef) => {
@@ -73,6 +73,7 @@ function EditProduct(props) {
             sale: body.sale,
             cost: body.cost,
             amount: body.amount,
+            option: body.option,
             picture: url,
           })
           .then((docRef) => {
@@ -150,6 +151,19 @@ function EditProduct(props) {
             <Select>
               <Select.Option value="Shirt">Shirt</Select.Option>
               <Select.Option value="Pants">Pants</Select.Option>
+            </Select>
+          </Form.Item>
+          <Form.Item
+            hasFeedback
+            label="Option"
+            name="option"
+            initialValue={bodyEdit.option}
+            rules={[{ required: true, message: "Please input your Option!" }]}
+          >
+            <Select>
+              <Select.Option value="New">New</Select.Option>
+              <Select.Option value="Promotion">Promotion</Select.Option>
+              <Select.Option value="Other">Other</Select.Option>
             </Select>
           </Form.Item>
           <Form.Item

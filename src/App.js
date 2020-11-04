@@ -6,7 +6,7 @@ import PageAdmin from "./Components/Page/admin";
 import Home from "./Components/Page/home";
 
 function App() {
-  return <PageAdmin />;
+  return <Home />;
 }
 
 export default App;

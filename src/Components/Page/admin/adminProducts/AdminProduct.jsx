@@ -111,6 +111,40 @@ function AdminProduct(props) {
       ),
     },
     {
+      title: "Option",
+      dataIndex: "option",
+      width: "10%",
+      filters: [
+        {
+          text: "New",
+          value: "New",
+        },
+        {
+          text: "Promotion",
+          value: "Promotion",
+        },
+        {
+          text: "Other",
+          value: "Other",
+        },
+      ],
+      filterMultiple: false,
+      onFilter: (value, record) => record.option.indexOf(value) === 0,
+      render: (option) => (
+        <>
+          <Tag
+            color={
+              (option === "Promotion" && "#B22222") ||
+              (option === "New" && "#00CED1") ||
+              (option === "Other" && "#87CEFA")
+            }
+          >
+            {option}
+          </Tag>
+        </>
+      ),
+    },
+    {
       title: "Size",
       dataIndex: "size",
       width: "10%",
@@ -143,7 +177,7 @@ function AdminProduct(props) {
     },
     {
       title: "Create Date",
-      width: "10%",
+      width: "15%",
       dataIndex: "createDate",
       defaultSortOrder: "descend",
       render: (createDate) => <>{moment(createDate).format(format.dateTime)}</>,
@@ -190,6 +224,7 @@ function AdminProduct(props) {
           sale,
           cost,
           amount,
+          option,
           picture,
           createDate,
         } = doc.data();
@@ -201,6 +236,7 @@ function AdminProduct(props) {
           cost,
           amount,
           picture,
+          option,
           sale,
           createDate,
         });
@@ -268,6 +304,7 @@ function AdminProduct(props) {
               pagination={{ pageSize: 10 }}
               size="small"
               rowKey="createDate"
+              scroll={{ x: 1200 }}
             />
           </Col>
         </Row>

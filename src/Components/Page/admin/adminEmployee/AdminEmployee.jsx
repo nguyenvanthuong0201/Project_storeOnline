@@ -8,6 +8,7 @@ import {
   notification,
   Popconfirm,
   Row,
+  Tag,
 } from "antd";
 import { Table } from "antd";
 import {
@@ -137,6 +138,13 @@ function AdminEmployee(props) {
       ],
       filterMultiple: false,
       onFilter: (value, record) => record.position.indexOf(value) === 0,
+      render: (position) => (
+        <>
+          <Tag color={position === "Admin" ? "#483D8B" : "	#FF8C00"}>
+            {position}
+          </Tag>
+        </>
+      ),
     },
     {
       title: "Gender",
@@ -154,6 +162,11 @@ function AdminEmployee(props) {
       ],
       filterMultiple: false,
       onFilter: (value, record) => record.gender.indexOf(value) === 0,
+      render: (gender) => (
+        <>
+          <Tag color={gender === "Male" ? "#000080" : "	#F4A460"}>{gender}</Tag>
+        </>
+      ),
     },
     {
       title: "Phone",
