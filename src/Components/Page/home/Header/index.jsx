@@ -4,7 +4,7 @@ import { Layout, Menu, Breadcrumb, Button, Badge, Dropdown } from "antd";
 import HomeCart from "./component/HomeCart";
 import Avatar from "antd/lib/avatar/avatar";
 import { ShoppingCartOutlined, UserOutlined } from "@ant-design/icons";
-import { Link } from "react-router-dom";
+import { Link, NavLink } from "react-router-dom";
 
 const { Header, Content } = Layout;
 
@@ -42,20 +42,20 @@ function HeaderHome(props) {
         <Menu.Item key="4">
           <Link to="/contact">Contact</Link>
         </Menu.Item>
-
         <div style={{ float: "right" }}>
           <Dropdown overlay={menu} placement="bottomLeft">
             <Avatar size="large" icon={<UserOutlined />} />
           </Dropdown>
         </div>
         <div style={{ float: "right", marginRight: "20px" }}>
-          <Badge count={1}>
-            <Avatar shape="square" icon={<ShoppingCartOutlined />} />
-          </Badge>
+          <NavLink to="/viewCart">
+            <Badge count={999}>
+              <Avatar shape="square" icon={<ShoppingCartOutlined />} />
+            </Badge>
+          </NavLink>
         </div>
       </Menu>
     </Header>
   );
 }
-
 export default HeaderHome;

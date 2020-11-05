@@ -9,6 +9,7 @@ import HomeContact from "../Components/Page/home/homeContact/HomeContact";
 import HomeIntroduce from "../Components/Page/home/homeIntroduce/HomeIntroduce";
 import HomeMater from "../Components/Page/home/homeMaster/HomeMater";
 import HomeProduct from "../Components/Page/home/homeProduct/HomeProduct";
+import PageCart from "../Components/Page/home/pageCart";
 import NotFound from "../Components/Page/NotFound";
 
 export const routes = [
@@ -44,6 +45,7 @@ export const routes = [
     exact: false,
     main: () => <AdminEmployee />,
   },
+
   {
     // 404 phải  đặt dưới cùng
     path: "",
@@ -59,17 +61,22 @@ export const routerHome = [
   },
   {
     path: "/product",
-    exact: true,
+    exact: false,
     main: () => <HomeProduct />,
   },
   {
     path: "/introduce",
-    exact: true,
+    exact: false,
     main: () => <HomeIntroduce />,
   },
   {
     path: "/contact",
-    exact: true,
+    exact: false,
     main: () => <HomeContact />,
+  },
+  {
+    path: "/viewCart",
+    exact: false,
+    main: () => <PageCart />,
   },
 ];
